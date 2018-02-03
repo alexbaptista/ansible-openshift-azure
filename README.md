@@ -20,7 +20,13 @@ Provisionamento do Openshift-origin na Azure usando ansible
 
 ## Pré-execução ##
 
-*  Configurando suas credenciais Azure em $HOME/.azure/credentials
+* Gerando uma SSH key para o Openshift
+
+```
+ssh-keygen -f ~/.ssh/openshift_rsa -t rsa -N ''
+```
+
+* Configurando suas credenciais Azure em $HOME/.azure/credentials
 
 > OBS: Recomendado a criação de uma conta no Azure Active Directory para uso exclusivo do Ansible, conforme documentação:
 > http://docs.ansible.com/ansible/latest/guide_azure.html
