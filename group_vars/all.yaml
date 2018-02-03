@@ -1,4 +1,4 @@
-##### AZURE SETTINGS #####
+[azure]
 azure_login: $(cat ~/.azure/credentials | grep ad_user | cut -d = -f2)
 azure_password: $(cat ~/.azure/credentials | grep password | cut -d = -f2)
 azure_subscription_id: $(cat ~/.azure/credentials | grep subscription_id | cut -d = -f2)
@@ -22,7 +22,7 @@ azure_node_instance_count: 1
 azure_disk_size: 128
 azure_storage_kind: "managed"
 
-##### OPENSHIFT SETTINGS #####
+[openshift]
 openshift_cluster_prefix: "os"
 openshift_cluster_username: "clusteradmin"
 openshift_cluster_password: "teste@123"
