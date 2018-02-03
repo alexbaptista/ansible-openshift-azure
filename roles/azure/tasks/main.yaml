@@ -1,0 +1,82 @@
+# Usando Azure CLI, não tem este recurso no módulo Azure RM do Ansible
+- name: Logon
+  shell: "az login -u {{ azure_login }} -p {{ azure_password }}"
+
+# Usando modulo Azure Resource Manager do Ansible
+- name: Create Resource Group
+  azure_rm_resourcegroup:
+    name: "{{ azure_resourcegroup }}"
+    state: present
+    location: "{{ azure_location }}"
+
+# Usando Azure CLI, não tem este recurso no módulo Azure RM do Ansible
+- name: Create Keyvault
+  shell: "az keyvault create -n {{ azure_keyvaultname }} -g {{ azure_resourcegroup }} -l {{ azure_location }} --enabled-for-template-deployment true"
+
+# Usando Azure CLI, não tem este recurso no módulo Azure RM do Ansible
+- name: Create a Secret for Keyvault
+  shell: "az keyvault secret set --vault-name {{ azure_keyvaultname }} -n {{ azure_keyvaultsecretname }} --file {{ azure_userprivatekey }}"
+
+# Usando Azure CLI, não tem este recurso no módulo Azure RM do Ansible
+- name: Create Azure APP
+  shell: "az ad sp create-for-rbac -n {{ azure_app_name }} --password {{ azure_app_password }} --role {{ azure_app_role }} --scopes /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ azure_resourcegroup }} --query [appId]"
+  register: az
+  debug: var=az.stdout_lines 
+
+# Usando modulo Azure Resource Manager do Ansible
+- name: Create Azure Deploy
+  azure_rm_deployment:
+    state: present
+    resource_group_name: "{{ azure_resourcegroup }}"
+    location: "{{ azure_location }}"
+    template_link: "https://raw.githubusercontent.com/Microsoft/openshift-origin/master/azuredeploy.json"
+    wait_for_deployment_completion: no
+    parameters:
+      _artifactsLocation:
+        value: "https://raw.githubusercontent.com/Microsoft/openshift-origin/master/"
+      masterVmSize:
+        value: "{{ azure_master_instance_type }}"
+      infraVmSize:
+        value: "{{ azure_infra_instance_type }}"
+      nodeVmSize:
+        value: "{{ azure_node_instance_type }}"  
+      storageKind:
+        value: "{{ azure_storage_kind }}"     
+      openshiftClusterPrefix:
+        value: "{{ openshift_cluster_prefix }}"     
+      masterInstanceCount:
+        value: "{{ azure_master_instance_count }}"   
+      infraInstanceCount:
+        value: "{{ azure_infra_instance_count }}"    
+      nodeInstanceCount:
+        value: "{{ azure_node_instance_count }}"
+      dataDiskSize:
+        value: "{{ azure_disk_size }}"   
+      adminUsername:
+        value: "{{ openshift_cluster_username }}"    
+      openshiftPassword:
+        value: "{{ openshift_cluster_password }}"   
+      enableMetrics:
+        value: "{{ openshift_metrics }}"   
+      enableLogging:
+        value: "{{ openshift_logging }}"     
+      enableCockpit:
+        value: "{{ openshift_cockpit }}"    
+      sshPublicKey:
+        value: "{{ azure_userpublickey }}"     
+      keyVaultResourceGroup:
+        value: "{{ azure_resourcegroup }}"     
+      keyVaultName:
+        value: "{{ azure_keyvaultname }}"    
+      keyVaultSecret:
+        value: "{{ azure_keyvaultsecretname }}"    
+      enableAzure:
+        value: "true"
+      aadClientId:
+        value: "{{ az.stdout_lines }}"
+      aadClientSecret:
+        value: "{{ azure_app_password }}"
+      defaultSubDomainType:
+        value: "{{ openshift_subdomain_type }}"
+      defaultSubDomain:
+        value: "{{ openshift_subdomain }}"

@@ -1,0 +1,5 @@
+- name: create Azure configuration
+  gather_facts: False
+  hosts: localhost
+  roles:
+    - azure
