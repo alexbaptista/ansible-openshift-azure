@@ -19,12 +19,11 @@
 
 # Usando Azure CLI, não tem este recurso no módulo Azure RM do Ansible
 - name: Create Azure APP
-  shell: "az ad sp create-for-rbac -n {{ azure_app_name }} --password {{ azure_app_password }} --role {{ azure_app_role }} --scopes /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ azure_resourcegroup }} --query [appId]"
-  register: az
-  debug: var=az.stdout_lines 
+  shell: "az ad sp create-for-rbac -n {{ azure_app_name }} --password {{ azure_app_password }} --role {{ azure_app_role }} --scopes /subscriptions/{{ azure_subscription_id }}/resourceGroups/{{ azure_resourcegroup }}"
+  register: azapp
 
 # Usando modulo Azure Resource Manager do Ansible
-- name: Create Azure Deploy
+- name: Create Azure Openshift Deploy
   azure_rm_deployment:
     state: present
     resource_group_name: "{{ azure_resourcegroup }}"
@@ -73,7 +72,7 @@
       enableAzure:
         value: "true"
       aadClientId:
-        value: "{{ az.stdout_lines }}"
+        value: "{{ azapp.stdout | from_json | json_query('appId') }}"
       aadClientSecret:
         value: "{{ azure_app_password }}"
       defaultSubDomainType:
