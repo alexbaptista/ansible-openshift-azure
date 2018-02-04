@@ -1,4 +1,4 @@
-[azure]
+##### AZURE SETTINGS #####
 azure_login: $(cat ~/.azure/credentials | grep ad_user | cut -d = -f2)
 azure_password: $(cat ~/.azure/credentials | grep password | cut -d = -f2)
 azure_subscription_id: $(cat ~/.azure/credentials | grep subscription_id | cut -d = -f2)
@@ -10,7 +10,7 @@ azure_keyvaultsecretname: "TesteVaultSecret"
 azure_userprivatekey: "~/.ssh/openshift_rsa"
 # Insira a key em linha
 azure_userpublickey: "changeme"
-azure_app_name: "openshiftansibleapp"
+azure_app_name: "openshiftapp"
 azure_app_password: "teste@123"
 azure_app_role: "contributor"
 azure_master_instance_type: "Standard_DS2_v2"
@@ -22,13 +22,13 @@ azure_node_instance_count: 1
 azure_disk_size: 128
 azure_storage_kind: "managed"
 
-[openshift]
+##### OPENSHIFT SETTINGS #####
 openshift_cluster_prefix: "os"
 openshift_cluster_username: "clusteradmin"
 openshift_cluster_password: "teste@123"
 # Se valor de subdomain for NIP.IO, não é necessário modificar o "openshift_subdomain"
 openshift_subdomain_type: "nipio"
 openshift_subdomain: "changeme"
-openshift_metrics: "false"
-openshift_logging: "false"
-openshift_cockpit: "false"
+openshift_metrics: "true"
+openshift_logging: "true"
+openshift_cockpit: "true"
